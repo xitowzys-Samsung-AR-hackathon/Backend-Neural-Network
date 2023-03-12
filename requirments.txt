@@ -1,0 +1,11 @@
+pyquaternion==0.9.5
+pyinstrument
+line_profiler
+torch
+numpy
+tqdm
+matplotlib
+glob
+PIL
+cv2
+flask
