@@ -8,9 +8,15 @@ import os
 from io import BytesIO
 import glob
 
+from pymongo import MongoClient
+
 from coam import DataBase, CoamModel
 
 app = FastAPI()
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["mydatabase"]
+collection = db["mycollection"]
 
 TARGETS_DIR = "./targets/"
 
@@ -33,7 +39,14 @@ async def add_to_database(image: UploadFile = File(...)):
     filepath = TARGETS_DIR + timestamp + '.' + img.format
     img.save(filepath)
     dataBase.add_target(filepath)
-    return {"msg": "success"}
+
+    result = collection.insert_one({"filepath": filepath})
+    doc_id = result.inserted_id
+
+    return {
+        "msg": "success",
+        "id": str(doc_id)
+    }
 
 
 @app.post('/find_matching')
@@ -53,10 +66,16 @@ async def find_matching(image: UploadFile = File(...)):
     if os.path.exists(filepath):
         os.remove(filepath)
 
+    filepath = dataBase.filepaths[target_id // dataBase.num_of_rot]
+
+    doc = collection.find_one({"filepath": filepath})
+    doc_id = doc["_id"]
+
     return {
         'msg': 'success',
         'score': score,
-        'img_path': dataBase.filepaths[target_id // dataBase.num_of_rot]
+        'img_path': filepath,
+        'id': str(doc_id)
     }
 
 
