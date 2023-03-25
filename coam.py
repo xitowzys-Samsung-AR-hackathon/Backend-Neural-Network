@@ -19,6 +19,8 @@ from os import listdir
 from os.path import isfile, join
 from PIL import Image
 
+os.environ['MEGADEPTH'] = 'MEGADEPTH_LOCATION'
+
 from options.options import get_dataset, get_model
 import models.architectures as architectures
 
@@ -34,6 +36,8 @@ from line_profiler import LineProfiler
 
 import cProfile, pstats, io
 from pstats import SortKey
+from google.colab import files
+
 
 class DataBase:
     def __init__(self, model):
@@ -338,5 +342,5 @@ if __name__ == "__main__":
       pr.dump_stats("coam_stats")
       
     
-    print(dataBase.filepaths[target_id//coamModel.num_of_rot],score)
+    print(dataBase.filepaths[target_id//dataBase.num_of_rot],score)
 
