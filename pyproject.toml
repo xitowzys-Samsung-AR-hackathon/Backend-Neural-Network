@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "coam"
+version = "0.1.0"
+description = ""
+authors = ["Kalinka George <xitowzys@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+segmentation-models-pytorch = {git = "https://github.com/hyenal/segmentation_models.pytorch.git"}
+matplotlib = "^3.7.1"
+opencv-python = "^4.7.0.72"
+pyquaternion = "^0.9.9"
+scikit-learn = "^1.2.2"
+torch = "1.7.1"
+torchvision = "0.8.2"
+torchaudio = "0.7.2"
+h5py = "^3.8.0"
+pyinstrument = "^4.4.0"
+line-profiler = "^4.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
