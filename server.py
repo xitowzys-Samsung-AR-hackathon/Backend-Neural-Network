@@ -1,4 +1,5 @@
-from flask import Flask, request, jsonify
+# from flask import Flask, request, jsonify
+from fastapi import FastAPI, File, UploadFile
 from PIL import Image
 from pathlib import Path
 import time
@@ -7,39 +8,37 @@ import os
 from io import BytesIO
 import glob
 
-app = Flask(__name__)
+from coam import DataBase, CoamModel
+
+app = FastAPI()
 
 TARGETS_DIR = "./targets/"
 
 Path(TARGETS_DIR).mkdir(parents=True, exist_ok=True)
 
-#initilize database and network here
-path = glob.glob('./coam/pretrainedmodels/effnetB1_ep86.pth')[0]
+# initilize database and network here
+path = glob.glob('./pretrainedmodels/effnetB1_ep86.pth')[0]
 coamModel = CoamModel(path)
 
-#Create database
+# Create database
 dataBase = DataBase(coamModel)
-#load targets
+# load targets
 dataBase.add_targets(TARGETS_DIR)
 
 
-@app.route('/add', methods=['POST'])
-def add_to_database():
-    file = request.files['image']
-    img = Image.open(file.stream)
-
+@app.post('/add')
+async def add_to_database(image: UploadFile = File(...)):
+    img = Image.open(BytesIO(await image.read()))
     timestamp = str(time.time())
     filepath = TARGETS_DIR + timestamp + '.' + img.format
     img.save(filepath)
-
     dataBase.add_target(filepath)
-
     return {"msg": "success"}
 
-@app.route('/find_matching', methods=['POST'])
-def find_matching():
-    file = request.files['image']
-    img = Image.open(file.stream)
+
+@app.post('/find_matching')
+async def find_matching(image: UploadFile = File(...)):
+    img = Image.open(BytesIO(await image.read()))
     timestamp = str(time.time())
     filepath = timestamp + '.' + img.format
     img.save(filepath)
@@ -54,11 +53,11 @@ def find_matching():
     if os.path.exists(filepath):
         os.remove(filepath)
 
-    return jsonify({
+    return {
         'msg': 'success',
         'score': score,
-        'img': data
-    })
+        'img_path': dataBase.filepaths[target_id // dataBase.num_of_rot]
+    }
 
 
 if __name__ == "__main__":

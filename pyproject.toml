@@ -7,18 +7,20 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+torch = {version = "1.7.1", markers = "sys_platform=='darwin'"}
+torchvision = {version = "0.8.2", markers = "sys_platform=='darwin'"}
+torchaudio = {version = "0.7.2", markers = "sys_platform=='darwin'"}
 segmentation-models-pytorch = {git = "https://github.com/hyenal/segmentation_models.pytorch.git"}
 matplotlib = "^3.7.1"
 opencv-python = "^4.7.0.72"
 pyquaternion = "^0.9.9"
 scikit-learn = "^1.2.2"
-torch = "1.7.1"
-torchvision = "0.8.2"
-torchaudio = "0.7.2"
 h5py = "^3.8.0"
 pyinstrument = "^4.4.0"
 line-profiler = "^4.0.3"
-
+fastapi = "^0.95.0"
+uvicorn = "^0.21.1"
+python-multipart = "^0.0.6"
 
 [build-system]
 requires = ["poetry-core"]
